@@ -1,0 +1,82 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cover-uploader { display: grid; gap: 10px; }
+.upload-zone {
+  min-height: 150px;
+  border: 1px dashed var(--foreground);
+  background: var(--background);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: .72rem;
+  letter-spacing: .08em;
+  font-weight: 700;
+}
+.upload-zone:hover { background: var(--foreground); color: var(--background); }
+.upload-zone small { font-size: .58rem; font-weight: 400; opacity: .7; }
+.cover-preview { position: relative; border: 1px solid var(--foreground); background: #000; }
+.cover-preview img { display: block; width: 100%; max-height: 360px; object-fit: cover; opacity: .9; }
+.media-remove { position: absolute; right: 12px; bottom: 12px; border: 1px solid #fff; background: #000; color: #fff; padding: 8px 11px; cursor: pointer; text-transform: uppercase; font-size: .6rem; letter-spacing: .08em; }
+
+.rich-editor { border: 1px solid var(--foreground); background: var(--surface); text-transform: none; letter-spacing: normal; font-weight: 400; }
+.editor-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+  border-bottom: 1px solid var(--foreground);
+  background: var(--surface);
+}
+.editor-toolbar span { width: 1px; margin: 2px 4px; background: var(--line); }
+.editor-toolbar button { min-width: 34px; border: 1px solid var(--line); background: transparent; padding: 6px 9px; cursor: pointer; font-size: .68rem; }
+.editor-toolbar button:hover { border-color: var(--foreground); background: var(--foreground); color: var(--background); }
+.editor-canvas {
+  min-height: 480px;
+  padding: clamp(22px, 4vw, 52px);
+  outline: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.12rem;
+  line-height: 1.75;
+}
+.editor-canvas:focus { box-shadow: inset 0 0 0 2px var(--foreground); }
+.editor-canvas h2, .editor-canvas h3 { font-family: Arial, Helvetica, sans-serif; letter-spacing: -.04em; line-height: 1.05; }
+.editor-canvas h2 { margin: 1.7em 0 .6em; font-size: 2rem; }
+.editor-canvas h3 { margin: 1.5em 0 .5em; font-size: 1.45rem; }
+.editor-canvas blockquote { margin: 2em 0; padding-left: 1.2em; border-left: 3px solid var(--foreground); font-size: 1.25em; font-style: italic; }
+.editor-canvas img { display: block; max-width: 100%; height: auto; margin: 2em auto; }
+.editor-canvas a { text-decoration: underline; text-underline-offset: 3px; }
+.editor-error { margin: 10px; }
+.editor-help { margin: 0; padding: 9px 12px; border-top: 1px solid var(--line); color: var(--muted); font-family: Arial, sans-serif; font-size: .65rem; text-transform: uppercase; letter-spacing: .06em; }
+
+.rich-content h2, .rich-content h3 { font-family: Arial, Helvetica, sans-serif; line-height: 1.05; letter-spacing: -.05em; }
+.rich-content h2 { margin: 2.2em 0 .7em; font-size: clamp(2rem, 4vw, 3.2rem); }
+.rich-content h3 { margin: 2em 0 .6em; font-size: clamp(1.45rem, 3vw, 2.1rem); }
+.rich-content ul, .rich-content ol { padding-left: 1.3em; margin: 1.5em 0; }
+.rich-content li { margin-bottom: .5em; }
+.rich-content blockquote { margin: 2em -8vw; padding: .2em 0 .2em 1em; border-left: 4px solid var(--foreground); font-size: clamp(1.4rem, 3vw, 2.1rem); font-style: italic; line-height: 1.45; }
+.rich-content img { display: block; width: auto; max-width: min(100vw - 48px, 1040px); max-height: 760px; object-fit: contain; margin: 3em 50%; transform: translateX(-50%); filter: grayscale(100%); }
+.rich-content a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.rich-content pre { overflow-x: auto; padding: 20px; background: var(--foreground); color: var(--background); font: .85em/1.6 monospace; }
+
+@media (max-width: 760px) {
+  .editor-toolbar { position: static; }
+  .editor-canvas { min-height: 380px; padding: 20px; }
+  .rich-content blockquote { margin-left: 0; margin-right: 0; }
+  .rich-content img { max-width: calc(100vw - 28px); }
+}

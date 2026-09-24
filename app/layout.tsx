@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./admin.css";
+import "./editor.css";
 
 export const metadata: Metadata = {
   title: "Sy — personal notes",
