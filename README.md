@@ -1,25 +1,35 @@
 # By-Sy
 
-Template awal website personal/blog untuk Sy.
+Website personal dan blog minimal untuk Sy, dibangun dengan Next.js, Supabase, dan Vercel.
 
-## Status
+## Fitur
 
-Repo sebelumnya kosong, jadi proyek ini dimulai dari scaffold baru. Versi pertama berisi:
+- Homepage dan arsip blog publik
+- Detail artikel dan reading time
+- Login admin email/password di `/admin/login`
+- Admin privat dengan Supabase Auth
+- Buat, edit, hapus, draft, dan publish tulisan
+- Pengaturan nama, intro, email, dan footer
+- Row Level Security di Supabase
 
-- Homepage personal minimal
-- Blog archive
-- Detail artikel
-- Kategori Cerita, Opini, Catatan Belajar, Visual
-- Admin panel template di `/admin`
-- Skema awal Supabase di `supabase/schema.sql`
-- Struktur siap dideploy ke Vercel
+## Environment variables
 
-## Menjalankan lokal
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+```
+
+## Setup database
+
+1. Jalankan `supabase/schema.sql` di Supabase SQL Editor.
+2. Jalankan `supabase/migrations/002_admin_cms.sql`.
+3. Di Supabase buka Authentication → Users → Add user, lalu buat akun admin email/password.
+4. Tambahkan environment variables ke Vercel dan redeploy.
+
+## Lokal
 
 ```bash
 npm install
 cp .env.example .env.local
 npm run dev
 ```
-
-Admin panel saat ini masih mode template/browser-session. Tahap berikutnya adalah menghubungkan login email/password, database artikel, upload media, dan pengaturan website ke Supabase.

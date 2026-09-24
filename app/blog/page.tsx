@@ -1,6 +1,10 @@
 import Link from "next/link";
-import { posts, siteContent } from "@/lib/content";
+import { SiteHeader } from "@/components/site-header";
+import { formatDate, getPublishedPosts, getSiteSettings, readingTime } from "@/lib/data";
 
-export default function BlogPage() {
-  return <main className="site-shell"><header className="site-header"><Link className="logo" href="/">{siteContent.name}</Link><nav className="nav"><Link href="/">Home</Link><Link href="/blog">Blog</Link><a href="mailto:hello@example.com">Email</a></nav></header><section className="article"><div className="eyebrow">Archive</div><h1>Semua tulisan</h1><p className="lede">Cerita, opini, catatan belajar, dan visual yang ingin kusimpan.</p><div className="post-list">{posts.map((post) => <Link className="post-card" href={`/blog/${post.slug}`} key={post.slug}><div className="post-meta">{post.date}<br />{post.readingTime}</div><div><span className="tag">{post.category}</span><h3>{post.title}</h3><p>{post.excerpt}</p></div></Link>)}</div></section><footer className="site-footer"><p>{siteContent.footer}</p></footer></main>;
+export const revalidate = 60;
+
+export default async function BlogPage() {
+  const [posts, settings] = await Promise.all([getPublishedPosts(), getSiteSettings()]);
+  return <main className="site-shell"><SiteHeader settings={settings} /><section className="article"><div className="eyebrow">Archive</div><h1>Semua tulisan</h1><p className="lede">Cerita, opini, catatan belajar, dan visual yang ingin kusimpan.</p>{posts.length ? <div className="post-list">{posts.map((post) => <Link className="post-card" href={`/blog/${post.slug}`} key={post.id}><div className="post-meta">{formatDate(post.published_at)}<br />{readingTime(post.body)}</div><div><span className="tag">{post.category}</span><h3>{post.title}</h3><p>{post.excerpt}</p></div></Link>)}</div> : <div className="empty-state"><p>Belum ada tulisan yang diterbitkan.</p></div>}</section><footer className="site-footer"><p>{settings.footer}</p></footer></main>;
 }
