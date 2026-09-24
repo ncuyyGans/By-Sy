@@ -6,16 +6,10 @@ export const revalidate = 60;
 
 export default async function Home() {
   const [posts, settings] = await Promise.all([getPublishedPosts(), getSiteSettings()]);
-  const socials = [
-    ["GitHub", settings.github_url],
-    ["Instagram", settings.instagram_url],
-    ["X / Twitter", settings.x_url],
-    ["Email", `mailto:${settings.email}`],
-  ].filter(([, url]) => Boolean(url));
-
-  return <main className="site-shell"><SiteHeader settings={settings} /><section className="profile-hero"><div className="hero-kicker"><span>Personal journal</span><span>{settings.location}</span></div><div className="hero-name" aria-label={`Hai, aku ${settings.name}`}><span>HI, I&apos;M</span><strong>{settings.name.toUpperCase()}</strong></div><div className="hero-bottom"><div className="availability"><span className="pulse-dot" />Available on the internet</div><div className="hero-copy"><p className="role">{settings.role}</p><p>{settings.intro}</p><div className="social-list">{socials.map(([label, url]) => <a key={label} href={url} target={url.startsWith("http") ? "_blank" : undefined} rel="noreferrer">{label} ↗</a>)}</div></div></div></section><section className="writing-section"><div className="section-label"><span>01</span><span>Latest writing</span><Link href="/blog">View archive ↗</Link></div>{posts.length ? <div className="editorial-list">{posts.slice(0, 4).map((post, index) => <PostRow key={post.id} post={post} index={index + 1} />)}</div> : <div className="empty-state large-empty"><p>Belum ada tulisan yang diterbitkan.</p><span>Tulisan pertamamu akan muncul di sini.</span></div>}</section><footer className="site-footer"><p>{settings.footer}</p><p>© {new Date().getFullYear()} / {settings.location}</p></footer></main>;
+  const socials = [["GitHub", settings.github_url], ["Instagram", settings.instagram_url], ["X / Twitter", settings.x_url]].filter(([, url]) => Boolean(url));
+  return <main className="site-shell"><SiteHeader settings={settings} /><section className="profile-hero"><p className="intro-label">Hello, I&apos;m</p><h1>{settings.name}</h1><div className="profile-copy"><p className="role">{settings.role}</p><p>{settings.intro}</p></div><div className="profile-meta"><span>{settings.location}</span><div>{socials.map(([label, url]) => <a key={label} href={url} target="_blank" rel="noreferrer">{label}</a>)}<a href={`mailto:${settings.email}`}>Email</a></div></div></section><section className="writing-section"><div className="section-heading"><h2>Recent writing</h2><Link href="/blog">View all</Link></div>{posts.length ? <div className="post-list">{posts.slice(0, 5).map((post) => <PostRow key={post.id} post={post} />)}</div> : <div className="empty-state"><p>Belum ada tulisan yang diterbitkan.</p></div>}</section><footer className="site-footer"><p>{settings.footer}</p><p>© {new Date().getFullYear()}</p></footer></main>;
 }
 
-function PostRow({ post, index }: { post: Post; index: number }) {
-  return <Link className="editorial-row" href={`/blog/${post.slug}`}><span className="row-number">{String(index).padStart(2, "0")}</span><div><span className="tag">{post.category}</span><h2>{post.title}</h2><p>{post.excerpt}</p></div><div className="row-meta"><span>{formatDate(post.published_at)}</span><span>{readingTime(post.body)} baca</span><b>↗</b></div></Link>;
+function PostRow({ post }: { post: Post }) {
+  return <Link className="post-row" href={`/blog/${post.slug}`}><div><h3>{post.title}</h3><p>{post.excerpt}</p></div><div className="post-meta"><span>{formatDate(post.published_at)}</span><span>{readingTime(post.body)} baca</span></div></Link>;
 }
