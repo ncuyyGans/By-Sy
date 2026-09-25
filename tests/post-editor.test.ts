@@ -16,7 +16,7 @@ test("editor recovery, navigation guard, failed save and successful cleanup", as
   const {act, createElement} = await import("react");
   try {
     const result = await build({entryPoints: ["components/post-editor.tsx"], bundle: true, platform: "node", format: "esm", jsx: "automatic", packages: "external", write: false, plugins: [{name: "test-navigation", setup(builder) {
-      builder.onResolve({filter: /^next\\/navigation$/}, () => ({path: "router", namespace: "test"}));
+      builder.onResolve({filter: /^next\/navigation$/}, () => ({path: "router", namespace: "test"}));
       builder.onLoad({filter: /.*/, namespace: "test"}, () => ({contents: 'export const useRouter = () => ({ push: url => { window.savedDestination = url }, refresh: () => {} });', loader: "js"}));
     }}]});
     await writeFile(`${directory}/editor.mjs`, result.outputFiles[0].text);

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 function decodeEntities(value: string) {
   return value
     .replace(/&nbsp;/gi, " ")
@@ -11,16 +13,16 @@ function decodeEntities(value: string) {
 }
 
 function plainTextFromHtml(value: string) {
-  if (!value || !/<[a-z][\\s\\S]*>/i.test(value)) return value;
+  if (!value || !/<[a-z][\s\S]*>/i.test(value)) return value;
   return decodeEntities(
     value
-      .replace(/<br\\s*\\/?>/gi, "\\n")
+      .replace(/<br\s*\/?>/gi, "\n")
       .replace(/<li[^>]*>/gi, "• ")
-      .replace(/<\\/(p|h[1-6]|blockquote|li|pre|div)>/gi, "\\n")
+      .replace(/<\/(p|h[1-6]|blockquote|li|pre|div)>/gi, "\n")
       .replace(/<[^>]+>/g, ""),
   )
-    .replace(/[ \\t]+\\n/g, "\\n")
-    .replace(/\\n{3,}/g, "\\n\\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
@@ -30,7 +32,7 @@ export function RichTextEditor({ defaultValue = "", onChange, onBusyChange: _onB
   onBusyChange?: (busy: boolean) => void;
   disabled?: boolean;
 }) {
-  const [text, setText] = useStateValue(defaultValue);
+  const [text, setText] = useState(() => plainTextFromHtml(defaultValue));
 
   function update(value: string) {
     setText(value);
@@ -52,10 +54,3 @@ export function RichTextEditor({ defaultValue = "", onChange, onBusyChange: _onB
     <p className="editor-help">Editor teks sederhana. Gunakan baris kosong untuk memisahkan paragraf.</p>
   </div>;
 }
-
-function useStateValue(initialValue: string) {
-  const [value, setValue] = React.useState(() => plainTextFromHtml(initialValue));
-  return [value, setValue] as const;
-}
-
-import React from "react";
