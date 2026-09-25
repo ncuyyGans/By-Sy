@@ -75,3 +75,13 @@ td small { display: block; color: var(--muted); margin-top: 3px; }
   .two-columns { grid-template-columns: 1fr; }
   .admin-actions { width: 100%; justify-content: space-between; }
 }
+
+.preview-notice {
+  margin-bottom: 28px;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: .9rem;
+}
+.preview-notice p { margin: 6px 0 0; color: var(--muted); }
+.form-actions { flex-wrap: wrap; }
