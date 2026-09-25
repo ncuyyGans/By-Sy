@@ -1,0 +1,10 @@
+import Link from "next/link";
+import { SiteHeader } from "@/components/site-header";
+import { getSiteSettings } from "@/lib/data";
+
+export const revalidate = 60;
+
+export default async function AboutPage() {
+  const settings = await getSiteSettings();
+  return <main className="site-shell"><SiteHeader settings={settings} /><section className="page-hero"><p className="intro-label">About me</p><h1>Ruang untuk berpikir, membuat, dan berbagi.</h1><p className="page-lead">{settings.intro}</p></section><section className="about-layout"><article className="about-card about-card-large"><span className="eyebrow">Sedikit tentangku</span><h2>{settings.name}</h2><p>Aku adalah {settings.role.toLowerCase()} yang tinggal di {settings.location}. Website ini adalah rumah digital untuk menyimpan proses, membagikan hal yang kupelajari, dan mengenalkan karya yang sedang kubangun.</p><p>Aku percaya personal branding tidak harus terasa seperti iklan. Ia bisa tumbuh dari tulisan yang jujur, karya yang dikerjakan dengan baik, dan jejak proses yang bisa dilihat orang lain.</p></article><article className="about-card"><span className="eyebrow">Yang sedang kubangun</span><ul className="about-list"><li>Cerita dan catatan yang layak disimpan.</li><li>Eksperimen digital yang berguna dan terasa personal.</li><li>Portofolio yang menunjukkan cara berpikir, bukan hanya hasil akhir.</li></ul></article><article className="about-card"><span className="eyebrow">Temukan aku</span><div className="about-links">{settings.github_url && <a href={settings.github_url} target="_blank" rel="noreferrer">GitHub ↗</a>}{settings.instagram_url && <a href={settings.instagram_url} target="_blank" rel="noreferrer">Instagram ↗</a>}<a href={`mailto:${settings.email}`}>Email ↗</a></div></article></section><section className="page-cta"><div><span className="eyebrow">Lihat lebih dekat</span><h2>Kenalan lewat karya.</h2></div><Link className="button" href="/projects">Lihat project & karya</Link></section><footer className="site-footer"><p>{settings.footer}</p><p>© {new Date().getFullYear()}</p></footer></main>;
+}
