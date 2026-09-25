@@ -29,8 +29,6 @@ export type SiteSettings = {
 export type AboutPage = {
   id: number;
   eyebrow: string;
-  title: string;
-  lead: string;
   story_label: string;
   story_title: string;
   story_body: string;
@@ -84,8 +82,6 @@ export const defaultSettings: SiteSettings = {
 export const defaultAboutPage: AboutPage = {
   id: 1,
   eyebrow: "About me",
-  title: "Ruang untuk berpikir, membuat, dan berbagi.",
-  lead: defaultSettings.intro,
   story_label: "Sedikit tentangku",
   story_title: defaultSettings.name,
   story_body: "Aku adalah writer, learner, and internet wanderer yang tinggal di Cirebon, Indonesia. Website ini adalah rumah digital untuk menyimpan proses, membagikan hal yang kupelajari, dan mengenalkan karya yang sedang kubangun.",
