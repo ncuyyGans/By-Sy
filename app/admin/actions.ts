@@ -41,7 +41,7 @@ export async function updateSettings(formData: FormData) {
 
 export async function updateAboutPage(formData: FormData) {
   const supabase = await requireUser();
-  const { error } = await supabase.from("about_page").update({ eyebrow: value(formData, "eyebrow"), title: value(formData, "title"), lead: value(formData, "lead"), story_label: value(formData, "story_label"), story_title: value(formData, "story_title"), story_body: value(formData, "story_body"), story_body_2: value(formData, "story_body_2"), focus_label: value(formData, "focus_label"), focus_1: value(formData, "focus_1"), focus_2: value(formData, "focus_2"), focus_3: value(formData, "focus_3"), links_label: value(formData, "links_label"), cta_label: value(formData, "cta_label"), cta_title: value(formData, "cta_title"), cta_button_label: value(formData, "cta_button_label"), updated_at: new Date().toISOString() }).eq("id", 1);
+  const { error } = await supabase.from("about_page").update({ eyebrow: value(formData, "eyebrow"), story_label: value(formData, "story_label"), story_title: value(formData, "story_title"), story_body: value(formData, "story_body"), story_body_2: value(formData, "story_body_2"), focus_label: value(formData, "focus_label"), focus_1: value(formData, "focus_1"), focus_2: value(formData, "focus_2"), focus_3: value(formData, "focus_3"), links_label: value(formData, "links_label"), cta_label: value(formData, "cta_label"), cta_title: value(formData, "cta_title"), cta_button_label: value(formData, "cta_button_label"), updated_at: new Date().toISOString() }).eq("id", 1);
   if (error) redirect("/admin?error=about");
   revalidatePath("/about"); redirect("/admin?saved=about");
 }
