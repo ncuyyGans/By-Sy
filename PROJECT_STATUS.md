@@ -27,6 +27,7 @@ Private pages:
 - `/admin` — article list and site settings
 - `/admin/posts/new` — create an article
 - `/admin/posts/[id]` — edit an article
+- `/admin/posts/[id]/preview` — authenticated preview of the last saved article
 
 Admin routes are deliberately not linked from public navigation.
 
@@ -384,8 +385,9 @@ These items must be smoke-tested before being treated as complete:
 8. **No image processing**
    - Images are not resized, compressed, or given generated responsive variants.
 
-9. **No preview route**
-   - Drafts cannot yet be previewed as the public article page.
+9. **Saved draft preview**
+   - Implemented on the feature branch; Preview and production smoke tests remain pending.
+   - Only the last saved version is shown; unsaved live preview is not implemented.
 
 10. **CSS is global**
     - Public and admin systems share global primitives; changes should be regression-tested on both surfaces.
@@ -461,7 +463,7 @@ Recommended order:
 1. Complete and record the smoke test above.
 2. Lockfile and CI build check implemented; verify hosted CI.
 3. HTML sanitization implemented; smoke-test real saved content on Preview.
-4. Add draft preview.
+4. Saved draft preview implemented on PR #1; verify with an authenticated admin.
 5. Add autosave and unsaved-change warning.
 6. Add image compression/resize and media cleanup.
 7. Improve admin mutation error handling.
@@ -491,4 +493,26 @@ Scope: build reproducibility and article HTML safety, on a feature branch for re
 - Local verification: five regression tests pass, TypeScript passes, Next.js 15.5.26 production build succeeds without production credentials.
 - No database migration, production mutation, merge or production deployment performed in this continuation.
 - Authenticated CMS/media smoke tests and Supabase migration state remain unverified because this workspace has no configured Supabase environment or admin session.
-- Next product milestone after Preview verification: draft preview, followed by unsaved-change protection.
+- Next product milestone after Preview verification: unsaved-change protection and autosave.
+
+## 18. Saved draft preview — 25 September 2026
+
+- Added `/admin/posts/[id]/preview` and a new-tab link on existing article forms.
+- Preview verifies the Supabase user before reading a post; it uses the normal session client and existing RLS, never a privileged service key.
+- Invalid or inaccessible IDs return 404; database failures are surfaced rather than reported as missing content.
+- Preview uses dynamic rendering and noindex metadata. Public article queries still require `status = 'published'`.
+- Public and preview pages share `ArticleView`, including the HTML allowlist.
+- Preview is read-only and displays the last saved version; it does not save or publish the article.
+- No new schema migration or environment variable is needed.
+- Local checks: ten tests covering sanitization and preview access/read behavior, TypeScript, and production build.
+- Tests use a stubbed Auth response and HTTP transport, not the production database. Authenticated browser/Storage smoke tests remain pending.
+- PR #1's earlier commit `c2aeb27951ad3197c9f2a02c0a3f274499553bfb` passed GitHub CI and received a successful Vercel deployment status. The new preview commit requires its own checks.
+
+Preview smoke test before merge:
+
+1. Save a draft; reopen it and select **Preview tersimpan**.
+2. Confirm headings, images, text and layout match the public article appearance.
+3. Confirm opening preview does not change the draft status or public archive.
+4. Open the preview URL in a logged-out browser: it must redirect to login.
+5. Verify a nonexistent valid UUID returns 404 when signed in.
+6. Change text without saving: preview must still show the saved version; save and reload to see the update.

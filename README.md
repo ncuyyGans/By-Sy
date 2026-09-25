@@ -55,3 +55,10 @@ HTML artikel dibersihkan di server saat disimpan, dibaca publik, dan dibuka kemb
 di editor. Heading, daftar, kutipan, link HTTP(S)/email, dan gambar HTTP(S) didukung;
 script, iframe, event handler, CSS inline, dan URL berbahaya dihapus. Tulisan teks
 lama tetap didukung. Tidak ada migrasi database baru untuk perubahan ini.
+
+## Preview draft
+
+Simpan draft, buka kembali halaman edit, lalu klik **Preview tersimpan ↗**.
+Preview terbuka di tab baru dengan tampilan artikel publik. Halaman ini memerlukan
+login admin, menampilkan versi terakhir yang tersimpan, dan tidak menerbitkan tulisan.
+Perubahan yang belum disimpan belum terlihat di preview.
