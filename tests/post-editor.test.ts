@@ -33,7 +33,11 @@ test("editor recovery, navigation guard, failed save and successful cleanup", as
       Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype,"value")!.set!.call(title,"Tulisan terselamatkan");
       title.dispatchEvent(new dom.window.Event("input", {bubbles: true}));
     });
-    await act(async () => { const canvas = document.querySelector('[role="textbox"]')!; canvas.innerHTML='<p>Isi penting</p>'; canvas.dispatchEvent(new dom.window.Event("input",{bubbles:true})); });
+    await act(async () => {
+      const editor = document.querySelector('textarea[name="body"]') as HTMLTextAreaElement;
+      Object.getOwnPropertyDescriptor(dom.window.HTMLTextAreaElement.prototype,"value")!.set!.call(editor,"Isi penting");
+      editor.dispatchEvent(new dom.window.Event("input",{bubbles:true}));
+    });
     await act(async () => { await new Promise(resolve => setTimeout(resolve,900)); });
     assert.match(localStorage.getItem(key)!, /Tulisan terselamatkan/);
     assert.match(localStorage.getItem(key)!, /Isi penting/);
@@ -50,7 +54,7 @@ test("editor recovery, navigation guard, failed save and successful cleanup", as
     assert.match(document.body.textContent!, /Ada cadangan/);
     await act(async () => { Array.from(document.querySelectorAll('button')).find(b => b.textContent === "Pulihkan cadangan")!.click(); });
     assert.equal((document.querySelector('input[name="title"]') as HTMLInputElement).value,"Tulisan terselamatkan");
-    assert.match(document.querySelector('[role="textbox"]')!.innerHTML,/Isi penting/);
+    assert.equal((document.querySelector('textarea[name="body"]') as HTMLTextAreaElement).value,"Isi penting");
     await act(async () => { document.querySelector('form')!.requestSubmit(); });
     assert.match(document.querySelector('[role="alert"]')!.textContent!,/Slug sudah/);
     assert.ok(localStorage.getItem(key));

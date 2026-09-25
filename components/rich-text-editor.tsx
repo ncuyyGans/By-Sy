@@ -1,43 +1,56 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { uploadImage } from "@/lib/upload-image";
+import { useState } from "react";
 
-function initialHtml(value: string) {
-  if (!value) return "<p><br></p>";
-  if (/<[a-z][\s\S]*>/i.test(value)) return value;
-  const escaped = value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  return escaped.split(/\n\n+/).map((paragraph) => `<p>${paragraph.replace(/\n/g, "<br>")}</p>`).join("");
+function decodeEntities(value: string) {
+  return value
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'");
 }
 
-export function RichTextEditor({ defaultValue = "", onChange, onBusyChange, disabled = false }: { defaultValue?: string; onChange?: (value: string) => void; onBusyChange?: (busy: boolean) => void; disabled?: boolean }) {
-  const editorRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const initial = useRef(initialHtml(defaultValue));
-  const [html, setHtml] = useState(initial.current);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
+function plainTextFromHtml(value: string) {
+  if (!value || !/<[a-z][\s\S]*>/i.test(value)) return value;
+  return decodeEntities(
+    value
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<li[^>]*>/gi, "• ")
+      .replace(/<\/(p|h[1-6]|blockquote|li|pre|div)>/gi, "\n")
+      .replace(/<[^>]+>/g, ""),
+  )
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
 
-  function sync() { const value = editorRef.current?.innerHTML ?? ""; setHtml(value); onChange?.(value); }
-  function command(name: string, commandValue?: string) {
-    editorRef.current?.focus();
-    document.execCommand(name, false, commandValue);
-    sync();
-  }
-  function addLink() {
-    const url = window.prompt("Masukkan URL link:", "https://");
-    if (url) command("createLink", url);
-  }
-  async function addImage(file?: File) {
-    if (!file) return;
-    setUploading(true); onBusyChange?.(true); setError("");
-    try {
-      const url = await uploadImage(file);
-      command("insertImage", url);
-    } catch (uploadError) {
-      setError(uploadError instanceof Error ? uploadError.message : "Upload gagal.");
-    } finally { setUploading(false); onBusyChange?.(false); if (fileRef.current) fileRef.current.value = ""; }
+export function RichTextEditor({ defaultValue = "", onChange, onBusyChange: _onBusyChange, disabled = false }: {
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  onBusyChange?: (busy: boolean) => void;
+  disabled?: boolean;
+}) {
+  const [text, setText] = useState(() => plainTextFromHtml(defaultValue));
+
+  function update(value: string) {
+    setText(value);
+    onChange?.(value);
   }
 
-  return <div className="rich-editor"><input type="hidden" name="body" value={html} /><div className="editor-toolbar" role="toolbar" aria-label="Format artikel"><button type="button" onMouseDown={(e) => { e.preventDefault(); command("formatBlock", "h2"); }}>H2</button><button type="button" onMouseDown={(e) => { e.preventDefault(); command("formatBlock", "h3"); }}>H3</button><button type="button" onMouseDown={(e) => { e.preventDefault(); command("formatBlock", "p"); }}>P</button><span /><button type="button" onMouseDown={(e) => { e.preventDefault(); command("bold"); }}><b>B</b></button><button type="button" onMouseDown={(e) => { e.preventDefault(); command("italic"); }}><i>I</i></button><button type="button" onMouseDown={(e) => { e.preventDefault(); command("formatBlock", "blockquote"); }}>“”</button><button type="button" onMouseDown={(e) => { e.preventDefault(); command("insertUnorderedList"); }}>• List</button><button type="button" onMouseDown={(e) => { e.preventDefault(); addLink(); }}>Link</button><button type="button" onMouseDown={(e) => { e.preventDefault(); fileRef.current?.click(); }}>{uploading ? "Uploading…" : "Image"}</button></div><div ref={editorRef} className="editor-canvas" role="textbox" aria-labelledby="body-label" aria-multiline="true" contentEditable={!disabled} suppressContentEditableWarning dangerouslySetInnerHTML={{ __html: initial.current }} onInput={sync} /><input ref={fileRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => addImage(event.target.files?.[0])} />{error && <div className="form-error editor-error">{error}</div>}<p className="editor-help">Gunakan toolbar untuk heading, format teks, link, list, quote, dan gambar di dalam artikel.</p></div>;
+  return <div className="rich-editor">
+    <textarea
+      name="body"
+      className="editor-canvas"
+      role="textbox"
+      aria-labelledby="body-label"
+      aria-multiline="true"
+      value={text}
+      onChange={(event) => update(event.target.value)}
+      disabled={disabled}
+      placeholder="Tulis isi artikel di sini..."
+    />
+    <p className="editor-help">Editor teks sederhana. Gunakan baris kosong untuk memisahkan paragraf.</p>
+  </div>;
 }
