@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
+import "./home.css";
 import "./admin.css";
 import "./editor.css";
 import "./theme.css";
