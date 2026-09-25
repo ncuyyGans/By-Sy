@@ -23,13 +23,35 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 
 1. Jalankan `supabase/schema.sql` di Supabase SQL Editor.
 2. Jalankan `supabase/migrations/002_admin_cms.sql`.
-3. Di Supabase buka Authentication → Users → Add user, lalu buat akun admin email/password.
-4. Tambahkan environment variables ke Vercel dan redeploy.
+3. Jalankan `supabase/migrations/003_profile_fields.sql`.
+4. Jalankan `supabase/migrations/004_media_storage.sql` untuk bucket gambar.
+5. Di Supabase buka Authentication → Users → Add user, lalu buat akun admin email/password.
+6. Tambahkan environment variables ke Vercel dan redeploy.
 
 ## Lokal
 
 ```bash
-npm install
+npm ci
 cp .env.example .env.local
 npm run dev
 ```
+
+## Pemeriksaan sebelum merge
+
+Gunakan Node.js 22 atau lebih baru. Dependency dikunci dalam `package-lock.json`.
+
+```bash
+npm ci
+npm test
+npm run typecheck
+npm run build
+```
+
+GitHub Actions menjalankan pemeriksaan tersebut pada pull request dan push ke `main`.
+Build tidak memerlukan kredensial produksi; pengujian login, database, dan upload
+memerlukan konfigurasi Supabase pada environment pengujian.
+
+HTML artikel dibersihkan di server saat disimpan, dibaca publik, dan dibuka kembali
+di editor. Heading, daftar, kutipan, link HTTP(S)/email, dan gambar HTTP(S) didukung;
+script, iframe, event handler, CSS inline, dan URL berbahaya dihapus. Tulisan teks
+lama tetap didukung. Tidak ada migrasi database baru untuk perubahan ini.

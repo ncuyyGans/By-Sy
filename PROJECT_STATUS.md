@@ -1,6 +1,6 @@
 # By-Sy — Project Status & Handoff
 
-Last updated: 24 September 2026 (Asia/Jakarta)
+Last updated: 25 September 2026 (Asia/Jakarta)
 
 This document is the operational handoff for **By-Sy**, a personal website and blog for Sy. It records the current architecture, completed features, required configuration, known verification state, open risks, and a safe path for future work.
 
@@ -54,7 +54,7 @@ Vercel is connected to the GitHub repository and automatically deploys changes p
 - Supabase Storage
 - Vercel
 
-Important dependency note: the repository currently has no committed lockfile. `package.json` uses caret ranges, so a future clean install can resolve newer patch/minor versions. Before substantial work, run a clean local install and commit `package-lock.json` to make builds reproducible.
+Dependencies are now locked in `package-lock.json`. Use Node.js 22+ and `npm ci`. CI runs tests, TypeScript checking, and the production build on pull requests and main.
 
 ## 4. Architecture
 
@@ -158,7 +158,7 @@ Article HTML is stored in `posts.body`. Older plain-text posts are converted int
 
 Known technical limitation: the editor uses `document.execCommand`, which is deprecated but still broadly supported. It is acceptable as an initial implementation, but a mature editor such as TipTap/Lexical should replace it if editing requirements grow.
 
-Known security limitation: article HTML is rendered with `dangerouslySetInnerHTML` and is not currently sanitized. Only a trusted admin should have an account. Before allowing additional authors or external content, add server-side HTML sanitization with an explicit allowlist.
+Article HTML is sanitized with an explicit `sanitize-html` allowlist in `lib/article-html.ts`: before create/update, public rendering (including legacy rows), and passing stored content to the editor. Plain-text articles are escaped and converted into paragraphs. Inline styles, scripts, embeds, event handlers and unsafe URL schemes are removed. Authorization still assumes trusted admins; this does not replace an explicit role model.
 
 ### 4.5 Media upload
 
@@ -340,7 +340,7 @@ The following items have direct confirmation from implementation activity or use
 
 These items must be smoke-tested before being treated as complete:
 
-- The deployment containing commit `e739e145dca48a3546f80802cc4dd2f86f7e2058` and later documentation is currently `Ready`.
+- Production functional smoke tests remain pending. GitHub reports Vercel deployment success for main commit `c543525660316eb50921156cc2fbc4f37c063879` (24 September 2026).
 - Migration `003_profile_fields.sql` has been run successfully.
 - Migration `004_media_storage.sql` has been run successfully.
 - The `blog-media` bucket appears in Supabase Storage.
@@ -355,17 +355,16 @@ These items must be smoke-tested before being treated as complete:
 - Failed database/settings mutations are surfaced consistently; some settings paths currently redirect without displaying the Supabase error.
 - Accessibility has not received a formal audit.
 - SEO metadata, sitemap, RSS, Open Graph images, and structured data are not implemented.
-- There is no automated test suite or CI build separate from Vercel.
+- GitHub execution of the new CI workflow must be checked on the pull request; local tests and build pass.
 
 ## 12. Known issues and technical debt
 
-1. **No lockfile**
-   - Builds are not fully reproducible.
-   - Commit `package-lock.json` after a verified install.
+1. **Dependency updates**
+   - Lockfile added; keep it updated intentionally and use `npm ci`.
 
-2. **Unsanitized rich HTML**
-   - Safe only under the current trusted-single-admin assumption.
-   - Add allowlist sanitization before multi-author use.
+2. **HTML policy**
+   - Server-side allowlist added and regression-tested.
+   - Future editor features must update the policy and tests together.
 
 3. **Deprecated editor API**
    - `document.execCommand` should eventually be replaced.
@@ -460,8 +459,8 @@ Use this sequence for future updates:
 Recommended order:
 
 1. Complete and record the smoke test above.
-2. Commit a lockfile and add a CI build check.
-3. Add HTML sanitization.
+2. Lockfile and CI build check implemented; verify hosted CI.
+3. HTML sanitization implemented; smoke-test real saved content on Preview.
 4. Add draft preview.
 5. Add autosave and unsaved-change warning.
 6. Add image compression/resize and media cleanup.
@@ -480,3 +479,16 @@ Recommended order:
 - Do not run destructive SQL against production without a backup and a reviewed migration.
 - Preserve compatibility with existing plain-text posts while rich HTML posts remain in the same `body` column.
 - Keep `/admin` absent from public navigation even though it is protected.
+
+## 17. Continuation — 25 September 2026
+
+Scope: build reproducibility and article HTML safety, on a feature branch for review.
+
+- Added lockfile, regression tests, TypeScript script and GitHub Actions CI.
+- Replaced the obsolete `next lint` script with the explicit `typecheck` command.
+- Added server-side HTML allowlist to writes, public output and editor initial content.
+- Corrected README migration order to include profile fields and media storage.
+- Local verification: five regression tests pass, TypeScript passes, Next.js 15.5.26 production build succeeds without production credentials.
+- No database migration, production mutation, merge or production deployment performed in this continuation.
+- Authenticated CMS/media smoke tests and Supabase migration state remain unverified because this workspace has no configured Supabase environment or admin session.
+- Next product milestone after Preview verification: draft preview, followed by unsaved-change protection.
