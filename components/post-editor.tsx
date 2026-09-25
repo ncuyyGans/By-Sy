@@ -66,7 +66,7 @@ export function PostEditor({ action, initial, userId, postId, publishedAt, error
       if (!current.current.dirty) return;
       persist(); event.preventDefault(); event.returnValue = "";
     };
-    const hide = () => { if (document.visibilityState === "hidden" && !backup) persist(); };
+    const hide = () => { if (!backup) persist(); };
     const navigate = (event: MouseEvent) => {
       const link = (event.target as Element).closest?.("a[href]") as HTMLAnchorElement | null;
       if (!link || link.target === "_blank" || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0 || !current.current.dirty) return;
@@ -131,7 +131,7 @@ export function PostEditor({ action, initial, userId, postId, publishedAt, error
     </section>}
     <p className="editor-help" role="status" aria-live="polite">{message}</p>
     {saveError && <div className="form-error" role="alert">{saveError}</div>}
-    <fieldset className="editor-fields" disabled={pending || !ready}>
+    <fieldset className="editor-fields">
       {postId && <input type="hidden" name="id" value={postId} />}
       <input type="hidden" name="published_at" value={publishedAt} />
       <label>Judul<input name="title" value={fields.title} onChange={e => change("title", e.target.value)} required /></label>
@@ -142,7 +142,7 @@ export function PostEditor({ action, initial, userId, postId, publishedAt, error
         <label>Status<select name="status" value={fields.status} onChange={e => change("status", e.target.value)}><option value="draft">Draft</option><option value="published">Published</option></select></label>
       </div>
       <div><span id="cover-label">Cover image</span><CoverUploader key={`cover-${revision}`} defaultValue={fields.cover_url} onBusyChange={setCoverBusy} onChange={value => change("cover_url", value)} /></div>
-      <div><span id="body-label">Isi artikel</span><RichTextEditor key={`body-${revision}`} defaultValue={fields.body} onBusyChange={setBodyBusy} onChange={value => change("body", value)} disabled={pending || !ready} /></div>
+      <div><span id="body-label">Isi artikel</span><RichTextEditor key={`body-${revision}`} defaultValue={fields.body} onBusyChange={setBodyBusy} onChange={value => change("body", value)} disabled={pending} /></div>
       <div className="form-actions">
         <button className="button" type="submit" disabled={coverBusy || bodyBusy}>{pending ? "Menyimpan…" : postId ? "Simpan perubahan" : "Buat tulisan"}</button>
         {postId && <a className="text-link" href={`/admin/posts/${postId}/preview`} target="_blank" rel="noopener noreferrer">Preview tersimpan ↗</a>}
