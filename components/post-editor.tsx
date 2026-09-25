@@ -88,7 +88,15 @@ export function PostEditor({ action, initial, userId, postId, publishedAt, error
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, backup]);
 
+  function clearBackup() {
+    if (!backup) return;
+    try { localStorage.removeItem(key); } catch { /* Continue with the current edit. */ }
+    setBackup(null);
+    setMessage("Cadangan lama dilewati. Perubahan baru akan dicadangkan otomatis.");
+  }
+
   function change(name: keyof DraftFields, value: string) {
+    clearBackup();
     setFields(previous => ({ ...previous, [name]: value }));
   }
   function restore() {
@@ -118,12 +126,12 @@ export function PostEditor({ action, initial, userId, postId, publishedAt, error
   return <form action={submit} className="admin-card form-grid">
     {backup && <section className="draft-notice" aria-label="Pemulihan tulisan">
       <strong>Ada cadangan tulisan di browser ini.</strong>
-      <p>Cadangan dari {new Date(backup.updatedAt).toLocaleString("id-ID")}. Memulihkannya akan mengganti isi editor, termasuk jika artikel di website sudah lebih baru.</p>
+      <p>Cadangan dari {new Date(backup.updatedAt).toLocaleString("id-ID")}. Pilih pemulihan, gunakan versi website, atau langsung mulai mengetik untuk mengganti cadangan lama.</p>
       <div className="form-actions"><button type="button" onClick={restore}>Pulihkan cadangan</button><button type="button" onClick={discard}>Gunakan versi website</button></div>
     </section>}
     <p className="editor-help" role="status" aria-live="polite">{message}</p>
     {saveError && <div className="form-error" role="alert">{saveError}</div>}
-    <fieldset className="editor-fields" disabled={pending || !!backup || !ready}>
+    <fieldset className="editor-fields" disabled={pending || !ready}>
       {postId && <input type="hidden" name="id" value={postId} />}
       <input type="hidden" name="published_at" value={publishedAt} />
       <label>Judul<input name="title" value={fields.title} onChange={e => change("title", e.target.value)} required /></label>
@@ -134,7 +142,7 @@ export function PostEditor({ action, initial, userId, postId, publishedAt, error
         <label>Status<select name="status" value={fields.status} onChange={e => change("status", e.target.value)}><option value="draft">Draft</option><option value="published">Published</option></select></label>
       </div>
       <div><span id="cover-label">Cover image</span><CoverUploader key={`cover-${revision}`} defaultValue={fields.cover_url} onBusyChange={setCoverBusy} onChange={value => change("cover_url", value)} /></div>
-      <div><span id="body-label">Isi artikel</span><RichTextEditor key={`body-${revision}`} defaultValue={fields.body} onBusyChange={setBodyBusy} onChange={value => change("body", value)} disabled={pending || !!backup || !ready} /></div>
+      <div><span id="body-label">Isi artikel</span><RichTextEditor key={`body-${revision}`} defaultValue={fields.body} onBusyChange={setBodyBusy} onChange={value => change("body", value)} disabled={pending || !ready} /></div>
       <div className="form-actions">
         <button className="button" type="submit" disabled={coverBusy || bodyBusy}>{pending ? "Menyimpan…" : postId ? "Simpan perubahan" : "Buat tulisan"}</button>
         {postId && <a className="text-link" href={`/admin/posts/${postId}/preview`} target="_blank" rel="noopener noreferrer">Preview tersimpan ↗</a>}
