@@ -85,3 +85,8 @@ td small { display: block; color: var(--muted); margin-top: 3px; }
 }
 .preview-notice p { margin: 6px 0 0; color: var(--muted); }
 .form-actions { flex-wrap: wrap; }
+
+.editor-fields { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 20px; }
+.editor-fields:disabled { opacity: .65; }
+.draft-notice { padding: 16px; border: 1px solid var(--line); border-radius: 8px; }
+.draft-notice p { font-size: .9rem; color: var(--muted); }

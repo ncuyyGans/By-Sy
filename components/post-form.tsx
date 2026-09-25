@@ -1,10 +1,21 @@
+import { redirect } from "next/navigation";
 import { articleHtml } from "@/lib/article-html";
+import { createClient } from "@/lib/supabase/server";
 import type { Post } from "@/lib/data";
-import { CoverUploader } from "@/components/cover-uploader";
-import { RichTextEditor } from "@/components/rich-text-editor";
+import type { SavePostResult } from "@/lib/editor-draft";
+import { PostEditor } from "@/components/post-editor";
 
-const categories = ["Cerita", "Opini", "Catatan Belajar", "Visual"];
-
-export function PostForm({ action, post, error }: { action: (formData: FormData) => void | Promise<void>; post?: Post; error?: string }) {
-  return <form action={action} className="admin-card form-grid">{post && <input type="hidden" name="id" value={post.id} />}<input type="hidden" name="published_at" value={post?.published_at ?? ""} />{error && <div className="form-error">{error}</div>}<label>Judul<input name="title" defaultValue={post?.title} required /></label><label>Slug<input name="slug" defaultValue={post?.slug} placeholder="dibuat-otomatis-dari-judul" /></label><label>Ringkasan<textarea className="short-textarea" name="excerpt" defaultValue={post?.excerpt ?? ""} /></label><div className="two-columns"><label>Kategori<select name="category" defaultValue={post?.category ?? "Cerita"}>{categories.map((category) => <option key={category}>{category}</option>)}</select></label><label>Status<select name="status" defaultValue={post?.status ?? "draft"}><option value="draft">Draft</option><option value="published">Published</option></select></label></div><label>Cover image<CoverUploader defaultValue={post?.cover_url ?? ""} /></label><label>Isi artikel<RichTextEditor defaultValue={articleHtml(post?.body ?? "")} /></label><div className="form-actions"><button className="button" type="submit">{post ? "Simpan perubahan" : "Buat tulisan"}</button>{post && <a className="text-link" href={`/admin/posts/${post.id}/preview`} target="_blank" rel="noopener noreferrer">Preview tersimpan ↗</a>}<a className="text-link" href="/admin">Batal</a></div><p className="editor-help">Simpan tulisan terlebih dahulu. Preview menampilkan versi terakhir yang tersimpan, bukan perubahan yang belum disimpan.</p></form>;
+export async function PostForm({ action, post, error }: {
+  action: (formData: FormData) => Promise<SavePostResult>;
+  post?: Post;
+  error?: string;
+}) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/admin/login");
+  return <PostEditor key={`${user.id}:${post?.id ?? "new"}`} action={action} userId={user.id} postId={post?.id} publishedAt={post?.published_at ?? ""} error={error} initial={{
+    title: post?.title ?? "", slug: post?.slug ?? "", excerpt: post?.excerpt ?? "",
+    category: post?.category ?? "Cerita", status: post?.status ?? "draft",
+    cover_url: post?.cover_url ?? "", body: articleHtml(post?.body ?? ""),
+  }} />;
 }
