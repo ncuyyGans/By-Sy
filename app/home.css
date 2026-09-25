@@ -1,56 +1,58 @@
-.home-directory {
-  margin: 0 0 90px;
-  border-top: 1px solid var(--foreground);
+.home-preview-section {
+  margin: 0 0 82px;
 }
 
-.home-directory-row {
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 32px;
-  align-items: start;
-  gap: 20px;
+.about-preview {
   padding: 26px 0;
   border-bottom: 1px solid var(--line);
 }
 
-.home-directory-number {
-  padding-top: 6px;
-  color: var(--muted);
-  font-size: .72rem;
-  letter-spacing: .08em;
+.about-preview h3,
+.home-project-row h3 {
+  margin: 6px 0 7px;
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
+  line-height: 1.25;
+  letter-spacing: -.03em;
 }
 
-.home-directory-row h2 {
-  margin: 0 0 5px;
-  font-size: clamp(1.35rem, 3vw, 1.7rem);
-  line-height: 1.2;
-  letter-spacing: -.04em;
-}
-
-.home-directory-row p {
-  max-width: 590px;
+.about-preview > p,
+.home-project-row p {
+  max-width: 650px;
   margin: 0;
   color: var(--muted);
   font-size: .94rem;
 }
 
-.home-directory-arrow {
-  font-size: 1.35rem;
-  transition: transform .2s ease;
+.about-preview ul {
+  display: grid;
+  gap: 6px;
+  margin: 18px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: .86rem;
 }
 
-.home-directory-row:hover h2 {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 5px;
+.home-project-list { display: grid; }
+
+.home-project-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
 }
 
-.home-directory-row:hover .home-directory-arrow { transform: translateX(5px); }
+.home-project-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--muted);
+  font-size: .76rem;
+  text-align: right;
+}
 
 @media (max-width: 680px) {
-  .home-directory { margin-bottom: 70px; }
-  .home-directory-row { grid-template-columns: 34px minmax(0, 1fr) 24px; gap: 10px; padding: 22px 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .home-directory-arrow { transition: none; }
+  .home-preview-section { margin-bottom: 68px; }
+  .home-project-row { grid-template-columns: 1fr; gap: 10px; }
+  .home-project-meta { flex-direction: row; align-items: center; gap: 10px; text-align: left; }
 }
