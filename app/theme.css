@@ -1,0 +1,89 @@
+html[data-theme="dark"] {
+  --background: #111111;
+  --foreground: #f4f2ed;
+  --muted: #aaa7a0;
+  --line: #343434;
+  --accent: #f4f2ed;
+  --surface: #181818;
+  color-scheme: dark;
+}
+
+html[data-theme="light"] { color-scheme: light; }
+
+body,
+.home-panel,
+.about-card,
+.project-card,
+.admin-card,
+input,
+textarea,
+select,
+.button,
+.page-cta,
+.upload-zone,
+.editor-canvas {
+  transition: background-color .22s ease, color .22s ease, border-color .22s ease;
+}
+
+.theme-toggle {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 13px;
+  border: 1px solid var(--foreground);
+  border-radius: 999px;
+  background: var(--foreground);
+  color: var(--background);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 14%);
+  cursor: pointer;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.theme-toggle:hover {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.theme-toggle > span:first-child {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+html[data-theme="dark"] .home-panel:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+html[data-theme="dark"] .home-panel:hover > span:last-child { color: #4f4f4f; }
+html[data-theme="dark"] .notice { background: #202020; }
+html[data-theme="dark"] .form-error { background: #3a201d; color: #ffb7ad; }
+html[data-theme="dark"] .status-published { background: #1d3428; color: #a9d9bb; }
+html[data-theme="dark"] .status-draft { background: #292927; color: #c3c1ba; }
+
+@media (max-width: 680px) {
+  .theme-toggle { right: 14px; bottom: 14px; width: 42px; padding: 0; justify-content: center; }
+  .theme-toggle-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .home-panel,
+  .about-card,
+  .project-card,
+  .admin-card,
+  input,
+  textarea,
+  select,
+  .button,
+  .page-cta,
+  .upload-zone,
+  .editor-canvas { transition: none; }
+}
