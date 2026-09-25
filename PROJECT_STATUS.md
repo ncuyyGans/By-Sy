@@ -379,8 +379,9 @@ These items must be smoke-tested before being treated as complete:
 6. **Error handling**
    - Some server actions do not expose database errors to the admin UI.
 
-7. **No autosave or revision history**
-   - Long edits can be lost if the page closes before submission.
+7. **Local autosave; no server revision history**
+   - Per-account/per-post browser backups and explicit recovery are implemented.
+   - Backups do not sync between browsers and are not server-side revisions.
 
 8. **No image processing**
    - Images are not resized, compressed, or given generated responsive variants.
@@ -464,7 +465,7 @@ Recommended order:
 2. Lockfile and CI build check implemented; verify hosted CI.
 3. HTML sanitization implemented; smoke-test real saved content on Preview.
 4. Saved draft preview implemented on PR #1; verify with an authenticated admin.
-5. Add autosave and unsaved-change warning.
+5. Local browser autosave, explicit recovery, and unsaved-change warnings implemented; test the deployed editor before treating this milestone as fully verified.
 6. Add image compression/resize and media cleanup.
 7. Improve admin mutation error handling.
 8. Add per-post SEO, sitemap, RSS, and Open Graph metadata.
@@ -493,7 +494,7 @@ Scope: build reproducibility and article HTML safety, on a feature branch for re
 - Local verification: five regression tests pass, TypeScript passes, Next.js 15.5.26 production build succeeds without production credentials.
 - No database migration, production mutation, merge or production deployment performed in this continuation.
 - Authenticated CMS/media smoke tests and Supabase migration state remain unverified because this workspace has no configured Supabase environment or admin session.
-- Next product milestone after Preview verification: unsaved-change protection and autosave.
+- Local autosave and unsaved-change protection implemented in the next feature branch; next milestone after its verification: media compression/resize and cleanup.
 
 ## 18. Saved draft preview — 25 September 2026
 
@@ -516,3 +517,24 @@ Preview smoke test before merge:
 4. Open the preview URL in a logged-out browser: it must redirect to login.
 5. Verify a nonexistent valid UUID returns 404 when signed in.
 6. Change text without saving: preview must still show the saved version; save and reload to see the update.
+
+## 19. Local autosave and editor recovery — 25 September 2026
+
+- Debounced browser backup (800 ms) covers title, slug, excerpt, category, status, cover URL and rich-text body. Keys include account and article IDs, with a separate new-article key and a versioned format.
+- Existing backups require an explicit Restore/Use website version decision; they never silently overwrite server content. Restored HTML is sanitized with DOMPurify before it enters the editor.
+- Unsaved changes trigger confirmation for same-tab link navigation and the browser's native close/reload warning. Visibility changes and editor unmount also flush the latest backup. Browser/platform limits still apply to unload warnings; SPA history navigation relies on recovery rather than a custom history blocker.
+- Successful server saves clear the backup and navigate to admin. Failed saves keep both editor content and backup and show an inline error; duplicate slugs receive a friendly message. Zero-row updates are not treated as successful saves.
+- Uploads disable the save button until completion. The rich-text canvas no longer replaces its innerHTML on each keystroke.
+- Storage quota/privacy failures produce a visible message; manual save still works. Backups live only in this browser, can be removed by clearing browser data, and do not sync across devices. Editing the same post in multiple tabs uses the most recent backup writer.
+- No automatic publication, server autosave, or revision history is introduced. Explicit save/publish remains required. No migration or new environment variable is needed.
+- Local verification: 14 automated tests including a React/jsdom editor interaction test, TypeScript, and production build. The interaction test covers backup after edits, navigation warning, remount/recovery, failed-save retention and successful-save cleanup. It uses a simulated DOM and stubbed save/router, not production Auth or database.
+- Public archive inspection confirmed the user's article **Belajar Menggunakan Agent AI** is visible on 25 September 2026. This confirms public listing, not every CRUD/upload workflow.
+- PR #1 was merged as `c44c45841d38211d2e1e0b3ca894f549ccb71e5a`; its production deployment succeeded. Logged-out preview access redirected to `/admin/login`.
+
+Manual checks for the new editor:
+1. Edit a draft, wait for the local-backup message, reload, and choose Restore.
+2. Check title/body/cover/category/status and cursor behavior on desktop and mobile.
+3. Try a duplicate slug: content and backup must remain available.
+4. Save successfully, reopen the editor, and confirm no stale recovery prompt appears.
+5. Confirm that local backup alone never changes the public article.
+6. Verify upload followed by save, storage-unavailable messaging, and close/navigation warnings in the real browser.

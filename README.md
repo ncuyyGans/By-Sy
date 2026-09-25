@@ -62,3 +62,14 @@ Simpan draft, buka kembali halaman edit, lalu klik **Preview tersimpan ↗**.
 Preview terbuka di tab baru dengan tampilan artikel publik. Halaman ini memerlukan
 login admin, menampilkan versi terakhir yang tersimpan, dan tidak menerbitkan tulisan.
 Perubahan yang belum disimpan belum terlihat di preview.
+
+## Cadangan otomatis editor
+
+Editor menyimpan cadangan lokal setelah 800 ms tanpa perubahan, terpisah per akun
+serta artikel. Saat membuka editor kembali, pilih **Pulihkan cadangan** atau
+**Gunakan versi website**. Cadangan tidak memublikasikan artikel dan tidak tersinkron
+antarperangkat. Simpan manual tetap diperlukan; cadangan dihapus setelah server
+mengonfirmasi penyimpanan berhasil. Jika penyimpanan gagal, isi editor dipertahankan.
+
+Browser dapat membatasi peringatan saat tab ditutup, dan menghapus data browser
+juga menghapus cadangan. Hindari mengedit artikel yang sama di beberapa tab sekaligus.
