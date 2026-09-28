@@ -1,58 +1,11 @@
-.home-preview-section {
-  margin: 0 0 82px;
-}
-
-.about-preview {
-  padding: 26px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.about-preview h3,
-.home-project-row h3 {
-  margin: 6px 0 7px;
-  font-size: clamp(1.25rem, 3vw, 1.55rem);
-  line-height: 1.25;
-  letter-spacing: -.03em;
-}
-
-.about-preview > p,
-.home-project-row p {
-  max-width: 650px;
-  margin: 0;
-  color: var(--muted);
-  font-size: .94rem;
-}
-
-.about-preview ul {
-  display: grid;
-  gap: 6px;
-  margin: 18px 0 0;
-  padding-left: 18px;
-  color: var(--muted);
-  font-size: .86rem;
-}
-
+.home-preview-section { margin: 0 0 82px; }
+.about-preview { padding: 26px 0; border-bottom: 1px solid var(--line); }
+.about-preview h3, .home-project-row h3 { margin: 6px 0 7px; font-size: clamp(1.25rem, 3vw, 1.55rem); line-height: 1.25; letter-spacing: -.03em; }
+.about-preview > p, .home-project-row p { max-width: 650px; margin: 0; color: var(--muted); font-size: .94rem; }
+.home-skill-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.home-skill-list span { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border: 1px solid var(--line); font-size: .76rem; }
+.home-skill-list img { width: 16px; height: 16px; object-fit: contain; }
 .home-project-list { display: grid; }
-
-.home-project-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 150px;
-  gap: 24px;
-  padding: 24px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.home-project-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  color: var(--muted);
-  font-size: .76rem;
-  text-align: right;
-}
-
-@media (max-width: 680px) {
-  .home-preview-section { margin-bottom: 68px; }
-  .home-project-row { grid-template-columns: 1fr; gap: 10px; }
-  .home-project-meta { flex-direction: row; align-items: center; gap: 10px; text-align: left; }
-}
+.home-project-row { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.home-project-meta { display: flex; flex-direction: column; align-items: flex-end; color: var(--muted); font-size: .76rem; text-align: right; }
+@media (max-width: 680px) { .home-preview-section { margin-bottom: 68px; } .home-project-row { grid-template-columns: 1fr; gap: 10px; } .home-project-meta { flex-direction: row; align-items: center; gap: 10px; text-align: left; } }
